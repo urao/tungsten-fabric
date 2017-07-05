@@ -1,0 +1,52 @@
+set version 14.2R4-S1
+set system host-name mini1-mx80
+set system root-authentication encrypted-password "$1$/NfFA0og$gy2Pkd/tjHe..EtuUQmpU."
+set system name-server 172.29.131.60
+set system services ftp
+set system services ssh root-login allow
+set system services telnet
+set system services netconf ssh
+set system services netconf traceoptions file n1
+set system services netconf traceoptions flag all
+set system services netconf traceoptions flag incoming
+set system syslog user * any emergency
+set system syslog file messages any notice
+set system syslog file messages authorization info
+set system syslog file interactive-commands interactive-commands any
+set system ntp server 66.129.255.62
+set chassis fpc 0 pic 0 tunnel-services
+set chassis fpc 0 pic 0 inline-services bandwidth 1g
+set chassis network-services enhanced-ip
+set interfaces lt-0/0/0 unit 200 encapsulation frame-relay
+set interfaces lt-0/0/0 unit 200 dlci 200
+set interfaces lt-0/0/0 unit 200 peer-unit 201
+set interfaces lt-0/0/0 unit 200 family inet
+set interfaces lt-0/0/0 unit 201 encapsulation frame-relay
+set interfaces lt-0/0/0 unit 201 dlci 200
+set interfaces lt-0/0/0 unit 201 peer-unit 200
+set interfaces lt-0/0/0 unit 201 family inet
+set interfaces lo0 unit 100 family inet address 10.87.36.71/32
+set routing-options static route 10.87.36.64/28 next-hop lt-0/0/0.200
+set routing-options router-id 172.16.100.1
+set routing-options route-distinguisher-id 172.16.100.1
+set routing-options autonomous-system 64512
+set protocols mpls interface all
+set protocols bgp traceoptions file u1.log
+set protocols bgp traceoptions flag all
+set protocols bgp family inet-vpn unicast
+set protocols bgp group _contrail_asn-64512-external type internal
+set protocols bgp group _contrail_asn-64512-external local-address 172.16.100.1
+set protocols bgp group _contrail_asn-64512-external hold-time 90
+set protocols bgp group _contrail_asn-64512-external keep all
+set protocols bgp group _contrail_asn-64512-external family inet-vpn unicast
+set protocols bgp group _contrail_asn-64512-external family inet6-vpn unicast
+set protocols bgp group _contrail_asn-64512-external family evpn signaling
+set protocols bgp group _contrail_asn-64512-external family route-target
+set protocols bgp group _contrail_asn-64512-external neighbor 172.16.80.7
+set routing-instances public_vn instance-type vrf
+set routing-instances public_vn interface lt-0/0/0.201
+set routing-instances public_vn interface lo0.100
+set routing-instances public_vn vrf-target target:64512:3000
+set routing-instances public_vn vrf-table-label
+set routing-instances public_vn routing-options static route 0.0.0.0/0 next-hop lt-0/0/0.201
+set routing-instances public_vn routing-options static route 10.87.36.64/28 discard
