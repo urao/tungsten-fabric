@@ -1,0 +1,38 @@
+
+Steps to Create:
+================
+
+neutron net-list
+neutron subnet-list
+neutron subnet-update a8def2ac-881e-4e6a-a12b-c3bedea94d9d --name vn1-subnet
+neutron subnet-list
+neutron subnet-update c8c68481-e50b-4b5a-b9d0-766ee0172f4c --name vn2-subnet
+neutron subnet-list
+neutron lb-pool-create --lb-method ROUND_ROBIN --name vn2-pool --protocol {HTTP,TCP} --subnet-id vn2-subnet
+neutron lb-pool-create --lb-method ROUND_ROBIN --name vn2-pool --protocol {HTTP,HTTPS,TCP} --subnet-id vn2-subnet
+neutron lb-pool-create --lb-method ROUND_ROBIN --name vn2-pool --protocol TCP --subnet-id vn2-subnet
+neutron lb-pool-list
+neutron lb-member-create --address 200.1.1.4 --protocol-port 22 vn2-pool
+neutron lb-member-create --address 200.1.1.5 --protocol-port 22 vn2-pool
+neutron lb-member-list
+neutron lb-vip-create --name uvip --protocol-port 22 --protocol TCP --subnet-id vn1-subnet vn2-pool
+neutron lb-healthmonitor-create --type=TCP --delay=2 --timeout=10
+neutron lb-healthmonitor-create --type=TCP --delay=2 --timeout=10 --max-retries=10
+neutron lb-healthmonitor-associate a3e62464-ee30-4d0c-9a28-22593b96d529 vn2-pool
+neutron lb-pool-list
+neutron lb-pool-show vn2-pool
+ip netns list
+
+Steps to Delete:
+===============
+neutron lb-pool-list
+neutron lb-healthmonitor-list
+neutron lb-healthmonitor-show a3e62464-ee30-4d0c-9a28-22593b96d529
+neutron lb-healthmonitor-disassociate a3e62464-ee30-4d0c-9a28-22593b96d529 3d64336c-ba12-4b95-aae4-ba986e1af98b    (healthmonitor-id, pool-id)
+neutron lb-healthmonitor-delete a3e62464-ee30-4d0c-9a28-22593b96d529  (monitor-id)
+neutron lb-vip-list
+neutron lb-vip-delete c61cb3c5-d9d1-4201-9e16-203268a1e3ba (lb-vip-id)
+neutron lb-member-list
+neutron lb-member-delete 3db983f1-f13c-4d4e-97ea-97520544a1c0 (member-id)
+neutron lb-pool-list
+neutron lb-pool-delete 3d64336c-ba12-4b95-aae4-ba986e1af98b (pool-id)
