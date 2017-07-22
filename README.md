@@ -1,2 +1,2 @@
 # opencontrail
-Activities related to opencontrail deployment configuration
+Activities related to opencontrail
