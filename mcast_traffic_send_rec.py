@@ -1,4 +1,7 @@
 #! /usr/bin/env python
+# send.mgn
+# 0.0 ON 1 UDP DST 224.225.0.1/5000 PERIODIC [1000 64] INTERFACE eth2 
+# 300.0 OFF 1
 
 import sys
 import paramiko
