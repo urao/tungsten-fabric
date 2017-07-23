@@ -1,0 +1,58 @@
+heat_template_version: 2014-10-16 
+
+description: Create a single instance booting from root volume and attach data volume to it.
+
+parameters:
+  index:
+    type: string
+    default: 0
+  instance_name:
+    type: string
+    default: Minion
+  network:
+    type: string
+    default: baseNet
+
+resources:
+
+  my_root_vol:
+    type: OS::Cinder::Volume
+    properties:
+      description: Minion Root volume
+      source_volid: 47bd0be2-ef59-4098-b508-a0443cbcee99
+      volume_type: ClusterV
+      name:
+        list_join: ['-',[ { get_param: instance_name }, 'root', { get_param: index } ]]
+
+  my_data_vol:
+    type: OS::Cinder::Volume
+    properties:
+      description: Minion Data volume
+      source_volid: 611a885e-096d-4de2-9286-e44583b4ea52
+      volume_type: ClusterV
+      name:
+        list_join: ['-',[ { get_param: instance_name }, 'data', { get_param: index } ]]
+
+  server_1:
+    type: OS::Nova::Server
+    properties:
+      name:
+        list_join: ['-',[ { get_param: instance_name }, { get_param: index } ]]
+      flavor: m1.medium
+      block_device_mapping:
+        - volume_id: { get_resource: my_root_vol }
+          device_name: vda
+      networks: [ {network: { get_param: network } }]
+    depends_on: my_root_vol
+
+  vol_att:
+    type: OS::Cinder::VolumeAttachment
+    properties:
+      instance_uuid: { get_resource: server_1 }
+      volume_id: { get_resource: my_data_vol }
+      mountpoint: /dev/vdb
+
+outputs:
+  instance_networks:
+    description: The IP addresses of the deployed instance
+    value: { get_attr: [server_1, networks] }

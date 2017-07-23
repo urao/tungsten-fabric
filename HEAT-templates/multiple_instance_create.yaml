@@ -1,0 +1,29 @@
+heat_template_version: 2014-10-16
+
+description: Create multiple instances booting from root volume and attach data volume to it.
+
+
+parameters:
+
+  instance_name:
+    type: string
+    default: Minion
+  number_of_instances:
+    type: number
+    default: 1
+  network:
+    type: string
+    default: baseNet
+
+resources:
+  cluster:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: { get_param: number_of_instances }
+      resource_def: 
+        type: single_instance_create_vol_att.yaml
+        properties:
+          index: "%index%"
+          instance_name: { get_param: instance_name }
+          network: { get_param: network }
+
