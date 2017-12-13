@@ -12,7 +12,7 @@ cassandra_contents = db_contents['cassandra']
 
 for ks_name in ['config_db_uuid',
                 'useragent',
-                'DISCOVERY_SERVER',
+                #'DISCOVERY_SERVER',
                 'to_bgp_keyspace',
                 'svc_monitor_keyspace',]:
     cassandra_contents[ks_name] = {}
