@@ -44,6 +44,7 @@ def get_nodes(path):
 zk = kazoo.client.KazooClient(hostname)
 zk.start()
 nodes = get_nodes('/')
+zk.stop()
 db_contents['zookeeper'] = json.dumps(nodes)
 
 print 'contents:'
