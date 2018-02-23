@@ -1,6 +1,7 @@
 
-# Steps to deploy openstack orchestrator only
-# Below steps are tested on Ubuntu 14.04.4 with mitaka version of contrail debian package
+## Steps to deploy OpenStack orchestrator only
+
+Below steps are tested on Ubuntu 14.04.4 with mitaka version of contrail debian package
 
 1. Bring up single server/VM with Ubuntu 14.04.4 version of OS
 2. Copy contrail debian package onto the server
