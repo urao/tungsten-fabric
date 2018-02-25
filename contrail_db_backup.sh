@@ -1,9 +1,9 @@
 #
-#Works for all-in-one contrail cluster
+#Works for all-in-one contrail cluster based on unbuntu 14.04 contrail image
 #
 #!/usr/bin/env bash
 set -e
-set -x
+#set -x
 
 service supervisor-config stop
 service supervisor-analytics stop
