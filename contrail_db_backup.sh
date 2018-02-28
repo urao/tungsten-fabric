@@ -1,5 +1,5 @@
 #
-#Works for all-in-one contrail cluster based on unbuntu 14.04 contrail image
+# Tested on all-in-one contrail cluster based on unbuntu 14.04 contrail image
 #
 #!/usr/bin/env bash
 set -e
