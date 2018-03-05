@@ -9,7 +9,7 @@ from lxml import etree
 
 device_ip = "10.8.8.1"
 username = "root"
-password = "contrail123"
+password = "test123"
 
 try:
     with manager.connect(host=device_ip, port=22, username=username,
