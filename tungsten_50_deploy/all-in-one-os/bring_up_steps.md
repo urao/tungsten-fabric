@@ -1,9 +1,8 @@
 
 ## Steps to deploy all-in-one Contrail + Kolla Ocata OpenStack
 
-#Below steps are tested on a VM
-
-1. Bring up VM with Centos 7.4 OS with 2 interfaces eth0, eth1
+1. Bring up a Centos 7.4 VM with 4 vCPU, 32 GB of RAM and 100 GB of disk
+2. VM will have 2 NICs, eth0, eth1 configured with static IP.
 2. Modify ifcfg-eth0, ifcfg-eth1 under /etc/sysconfig/network-scripts similiar to below
 ```
 TYPE=Ethernet
@@ -29,9 +28,9 @@ IPADDR=192.0.2.181
 PREFIX=24
 ```
 3. Remove file /etc/sysconfig/network-scripts/ifcfg-Wired_connection_1 if it exists
-4. Make sure internet is reachable via interface eth0
-5. Interface eth1 is not used currently, but make sure its UP and configured with some IP address
-6. Install packages
+4. Make sure internet is accessible via interface eth0
+5. Interface eth1 is not been used currently, but make sure its UP and configured
+6. Install required packages
 ```
 yum install -y epel-release
 yum install -y git ansible net-tools
@@ -42,7 +41,7 @@ cd
 git clone http://github.com/Juniper/contrail-ansible-deployer
 cd contrail-ansible-deployer
 ```
-8. Copy [instances.yaml](https://github.com/urao/tungsten-fabric/blob/master/tungsten_50_deploy/all-in-one-os/instances.yaml) into contrail-ansible-deploper/config folder
+8. Copy [instances.yaml](https://github.com/urao/tungsten-fabric/blob/master/tungsten_50_deploy/all-in-one-os/instances.yaml) into config/ folder
 9. Modify ssh_pwd, ip, contrail_api_interface_address, keystone_admin_password, CONTROL_DATA_NET_LIST, CONTROLLER_NODES, VROUTER_GATEWAY in the instances.yaml file copied from the previous step
 10. Install Contrail and Kolla requirements
 ```
@@ -74,3 +73,8 @@ localhost                  : ok=7    changed=2    unreachable=0    failed=0
 sudo grep keystone_admin_password /root/contrail-kolla-ansible/etc/kolla/passwords.yml
 ```
 2. Browse to the IP http://<VM_IP_ADDRESS> and login with the user "admin" and the password from the previous step
+
+
+
+## Reference
+[Link](https://github.com/Juniper/contrail-ansible-deployer/wiki/Contrail-with-Kolla-Ocata)
