@@ -77,4 +77,4 @@ sudo grep keystone_admin_password /root/contrail-kolla-ansible/etc/kolla/passwor
 
 
 ## Reference
-[Link](https://github.com/Juniper/contrail-ansible-deployer/wiki/Contrail-with-Kolla-Ocata)
+[Contrail Wiki Link](https://github.com/Juniper/contrail-ansible-deployer/wiki/Contrail-with-Kolla-Ocata)
