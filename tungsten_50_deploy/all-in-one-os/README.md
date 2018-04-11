@@ -1,1 +1,1 @@
-Bring all-in-one contrail+openstack
+Bring up all-in-one contrail+openstack
