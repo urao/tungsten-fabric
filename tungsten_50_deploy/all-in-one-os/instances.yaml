@@ -1,6 +1,6 @@
 provider_config:
   bms:
-    ssh_pwd: c0ntrail123
+    ssh_pwd: contrail123
     ssh_user: root
     domainsuffix: local
 instances:
@@ -37,7 +37,7 @@ kolla_config:
     enable_barbican: no
     enable_heat: no
   kolla_passwords:
-    keystone_admin_password: c0ntrail123
+    keystone_admin_password: contrail123
 contrail_configuration:
   CONTAINER_REGISTRY: opencontrailnightly
   CONTRAIL_VERSION: latest
