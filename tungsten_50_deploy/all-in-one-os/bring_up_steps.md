@@ -28,7 +28,7 @@ USERCTL=no
 IPADDR=192.0.2.181
 PREFIX=24
 ```
-3. Remove file /etc/sysconfig/network-scripts/ifcfg-Wired_connection_1 if exists
+3. Remove file /etc/sysconfig/network-scripts/ifcfg-Wired_connection_1 if it exists
 4. Make sure internet is reachable via interface eth0
 5. Interface eth1 is not used currently, but make sure its UP and configured with some IP address
 6. Install packages
@@ -43,7 +43,7 @@ git clone http://github.com/Juniper/contrail-ansible-deployer
 cd contrail-ansible-deployer
 ```
 8. Copy [instances.yaml](https://github.com/urao/tungsten-fabric/blob/master/tungsten_50_deploy/all-in-one-os/instances.yaml) into contrail-ansible-deploper/config folder
-9. Modify ssh_pwd, ip, contrail_api_interface_address, keystone_admin_password, CONTROL_DATA_NET_LIST, CONTROLLER_NODES, VROUTER_GATEWAY in the above copied yaml file
+9. Modify ssh_pwd, ip, contrail_api_interface_address, keystone_admin_password, CONTROL_DATA_NET_LIST, CONTROLLER_NODES, VROUTER_GATEWAY in the instances.yaml file copied from the previous step
 10. Install Contrail and Kolla requirements
 ```
 ansible-playbook -i inventory/ playbooks/configure_instances.yml 
