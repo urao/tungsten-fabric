@@ -1,0 +1,50 @@
+provider_config:
+  bms:
+    ssh_pwd: c0ntrail123
+    ssh_user: root
+    domainsuffix: local
+instances:
+  bms1:
+    provider: bms
+    ip: 192.168.122.238
+    roles:
+        config_database:
+        config:
+        control:
+        analytics_database:
+        analytics:
+        webui:
+        kubemanger:
+        openstack_control:
+        openstack_network:
+        openstack_storage:
+        openstack_monitoring:
+        vrouter:
+          PHYSICAL_INTERFACE: eth0
+        openstack_compute:
+kolla_config:
+  customize:
+    nova.conf: |
+      [libvirt]
+      virt_type=qemu
+      cpu_mode=none
+  kolla_globals:
+    network_interface: eth0
+    openstack_release: ocata
+    contrail_api_interface_address: 192.168.122.238
+    enable_haproxy: no
+    enable_swift: no
+    enable_barbican: no
+    enable_heat: no
+  kolla_passwords:
+    keystone_admin_password: c0ntrail123
+contrail_configuration:
+  CONTAINER_REGISTRY: opencontrailnightly
+  CONTRAIL_VERSION: latest
+  CLOUD_ORCHESTRATOR: openstack
+  CONTROL_DATA_NET_LIST: 192.168.122.0/24
+  CONTROLLER_NODES: 192.168.122.238
+  RABBITMQ_NODE_PORT: 5673
+  AUTH_MODE: keystone
+  KEYSTONE_AUTH_URL_VERSION: /v3
+  VROUTER_GATEWAY: 192.168.122.1
