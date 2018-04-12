@@ -45,6 +45,7 @@ cd contrail-ansible-deployer
 9. Modify ssh_pwd, ip, contrail_api_interface_address, keystone_admin_password, CONTROL_DATA_NET_LIST, CONTROLLER_NODES, VROUTER_GATEWAY in the instances.yaml file copied from the previous step
 10. Install Contrail and Kolla requirements
 ```
+cd contrail-ansible-deployer
 ansible-playbook -i inventory/ playbooks/configure_instances.yml 
 ```
 11. Verify if the requirements  was successful.
@@ -54,6 +55,7 @@ localhost                  : ok=10   changed=2    unreachable=0    failed=0
 ```
 12. Deploy Contrail and Kolla containers
 ```
+cd contrail-ansible-deployer
 ansible-playbook -i inventory/ -e orchestrator=openstack playbooks/install_contrail.yml
 ```
 13. Verify if the deployment  was successful.
