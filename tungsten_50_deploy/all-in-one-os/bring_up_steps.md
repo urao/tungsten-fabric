@@ -78,8 +78,7 @@ sudo grep keystone_admin_password /root/contrail-kolla-ansible/etc/kolla/passwor
 ## Provision Weave Scope
 
 1. Follow the instructions in the official Weave Scope guide
-[http://www.tothenew.com/blog/weave-scope-monitoring-visualisation-management-for-docker]
-(http://www.tothenew.com/blog/weave-scope-monitoring-visualisation-management-for-docker/)
+[http://www.tothenew.com/blog/weave-scope-monitoring-visualisation-management-for-docker] (http://www.tothenew.com/blog/weave-scope-monitoring-visualisation-management-for-docker/)
 
 2. Now you should be able to connect to the UI using http://<HOST_IP>:4040
 
