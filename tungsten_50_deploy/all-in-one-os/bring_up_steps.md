@@ -85,13 +85,13 @@ sudo grep keystone_admin_password /root/contrail-kolla-ansible/etc/kolla/passwor
 3. The UI is totally self-explanatory. There are multiple filters that filters the components based on the scope required.
 
 4. Containers view
-<img src="./images/container_view.png" width=100>
+<img src="./images/container_view.png" width=200>
 
 5. Container detailed view
-<img src="./images/container_detail_view.png" width=100>
+<img src="./images/container_detail_view.png" width=200>
 
 6. Connecting to a container
-<img src="./images/connect_to_container.png" width=100>
+<img src="./images/connect_to_container.png" width=200>
 
 
 ## Reference
