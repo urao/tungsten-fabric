@@ -75,6 +75,24 @@ sudo grep keystone_admin_password /root/contrail-kolla-ansible/etc/kolla/passwor
 2. Browse to the IP http://<VM_IP_ADDRESS> and login with the user "admin" and the password from the previous step
 
 
+## Provision Weave Scope
+
+1. Follow the instructions in the official Weave Scope guide
+[http://www.tothenew.com/blog/weave-scope-monitoring-visualisation-management-for-docker](http://www.tothenew.com/blog/weave-scope-monitoring-visualisation-management-for-docker/)
+
+2. Now you should be able to connect to the UI using http://<HOST_IP>:4040
+
+3. The UI is totally self-explanatory. There are multiple filters that filters the components based on the scope required.
+
+4. Containers view
+<img src="./images/container_view.png" width=100>
+
+5. Container detailed view
+<img src="./images/container_detail_view.png" width=100>
+
+6. Connecting to a container
+<img src="./images/connect_to_container.png" width=100>
+
 
 ## Reference
 [Contrail Wiki Link](https://github.com/Juniper/contrail-ansible-deployer/wiki/Contrail-with-Kolla-Ocata)
