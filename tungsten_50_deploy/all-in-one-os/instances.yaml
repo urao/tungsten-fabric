@@ -3,6 +3,7 @@ provider_config:
     ssh_pwd: contrail123
     ssh_user: root
     domainsuffix: local
+    ntpserver: 10.84.5.100
 instances:
   bms1:
     provider: bms
