@@ -37,8 +37,9 @@ kolla_config:
     enable_heat: no
   kolla_passwords:
     keystone_admin_password: contrail123
-contrail_configuration:
+global_configuration:
   CONTAINER_REGISTRY: opencontrailnightly
+contrail_configuration:
   CONTRAIL_VERSION: latest
   CLOUD_ORCHESTRATOR: openstack
   UPGRADE_KERNEL: true
