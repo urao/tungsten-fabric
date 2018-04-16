@@ -40,6 +40,7 @@ kolla_config:
 global_configuration:
   CONTAINER_REGISTRY: opencontrailnightly
   CONTRAIL_VERSION: latest
+contrail_configuration:
   CLOUD_ORCHESTRATOR: openstack
   UPGRADE_KERNEL: true
   CONTROL_DATA_NET_LIST: 192.168.122.0/24
