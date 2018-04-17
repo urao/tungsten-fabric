@@ -91,13 +91,13 @@ scope launch
 3. The UI is totally self-explanatory. There are multiple filters that filters the components based on the scope required.
 
 4. Containers view
-<img src="./images/container_view.png" width=700>
+<img src="./images/container_view.png" width=900>
 
 5. Container detailed view
-<img src="./images/container_detail_view.png" width=700>
+<img src="./images/container_detail_view.png" width=900>
 
 6. Connecting to a container
-<img src="./images/connect_to_container.png" width=700>
+<img src="./images/connect_to_container.png" width=900>
 
 
 ## Reference
