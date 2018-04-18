@@ -1,7 +1,7 @@
 
 ## Steps to deploy all-in-one Contrail + OpenStack using Helm Deployer
 
-1. Bring up a Ubuntu 16.04.03 VM on a KVM Hypervisor with 4 vCPU, 32 GB of RAM and 300 GB of disk
+1. Bring up a Ubuntu 16.04.3 VM on a KVM Hypervisor with 4 vCPU, 32 GB of RAM and 300 GB of disk
 2. VM will have 1 NIC, eth0 configured with Static/DHCP IP.
 3. Make sure internet is accessible via interface eth0
 4. Install required packages
