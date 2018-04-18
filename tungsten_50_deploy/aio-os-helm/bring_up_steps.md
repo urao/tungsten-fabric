@@ -136,12 +136,6 @@ helm install --name contrail ${CHD_PATH}/contrail --namespace=contrail --values=
 cd ${OSH_PATH}
 ./tools/deployment/developer/nfs/091-heat-opencontrail.sh
 ```
-## Check Contrail Status and Access to Contrail UI
-
-```
-contrail-status
-https://<HOST_IP>:8143
-```
 
 ## Access to OpenStack Console
 
@@ -174,6 +168,26 @@ export OS_CLOUD=openstack_helm
 source $HOME/openstackrc
 openstack service list
 openstack image list
+```
+
+## Check Contrail Status and Access to Contrail UI
+
+```
+contrail-status
+https://<HOST_IP>:8143
+export OS_CLOUD=openstack_helm
+openstack token issue
+export TOKEN_ID=<id>
+curl -X GET -H "X-Auth-Token: $TOKEN_ID" http://192.168.122.93:8082/virtual-networks | python -mjson.tool
+```
+
+## Useful Commands
+```
+kubectl get pod --all-namespaces -o wide
+kubectl get pods -n contrail -o wide
+kubectl get pods -n openstack -o wide
+kubectl exec -it neutron-server-7d858848fb-2dtvl bash -n openstack
+
 ```
 
 ## Provision Weave Scope
