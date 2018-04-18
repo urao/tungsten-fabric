@@ -136,7 +136,44 @@ helm install --name contrail ${CHD_PATH}/contrail --namespace=contrail --values=
 cd ${OSH_PATH}
 ./tools/deployment/developer/nfs/091-heat-opencontrail.sh
 ```
-## Access to Horizon console
+## Access to Contrail UI
+
+```
+https://<HOST_IP>:8143
+```
+
+## Access to OpenStack Console
+
+```
+~# kubectl get svc -n openstack | grep horizon-int
+horizon-int           NodePort    10.108.83.192    <none>        80:31000/TCP         1d
+http://<HOST_IP>:31000/auth/login/?next=/
+```
+1. Install OpenStack client packages
+```
+sudo apt-get install python-pip -y
+pip install python-openstackclient
+
+```
+2. Create openstackrc file
+```
+cat > $HOME/openstackrc << EOF
+  export OS_USERNAME=admin
+  export OS_PASSWORD=password
+  export OS_TENANT_NAME=admin
+  export OS_AUTH_URL=http://keystone-api.openstack:35357/v3
+  export OS_IDENTITY_API_VERSION=3
+  export OS_USER_DOMAIN_NAME=${OS_USER_DOMAIN_NAME:-"Default"}
+  export OS_PROJECT_DOMAIN_NAME=${OS_PROJECT_DOMAIN_NAME:-"Default"}
+EOF
+```
+3. List of services endpoint list
+```
+export OS_CLOUD=openstack_helm
+source $HOME/openstackrc
+openstack service list
+openstack image list
+```
 
 ## Provision Weave Scope
 
