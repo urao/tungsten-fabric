@@ -2,7 +2,7 @@
 ## Steps to deploy all-in-one Contrail + OpenStack using Helm Deployer
 
 1. Bring up a Ubuntu 16.04.03 VM on a KVM Hypervisor with 4 vCPU, 32 GB of RAM and 300 GB of disk
-2. VM will have 1 NIC, eth0 configured with static/dhcp IP.
+2. VM will have 1 NIC, eth0 configured with Static/DHCP IP.
 3. Make sure internet is accessible via interface eth0
 4. Install required packages
 ```
@@ -165,7 +165,7 @@ https://www.weave.works/docs/scope/latest/installing/#k8s
 <img src="./images/pod_detail_view.png" width=900>
 
 9. Connecting to a Pod or Container
-<img src="./images/connect_to_container.png" width=400>
+<img src="./images/connect_to_container.png" width=900>
 
 
 ## Reference
