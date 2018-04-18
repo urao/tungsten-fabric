@@ -136,9 +136,10 @@ helm install --name contrail ${CHD_PATH}/contrail --namespace=contrail --values=
 cd ${OSH_PATH}
 ./tools/deployment/developer/nfs/091-heat-opencontrail.sh
 ```
-## Access to Contrail UI
+## Check Contrail Status and Access to Contrail UI
 
 ```
+contrail-status
 https://<HOST_IP>:8143
 ```
 
