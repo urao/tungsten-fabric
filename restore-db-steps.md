@@ -1,7 +1,7 @@
 ## Steps to restore Config DB 
 #### Tested on Contrail All-in-one R3.2.9 version
 
-1. Backup the config db, using the below command [Could have got config_db from customer's cluster]
+1. Backup the config db, using the below command [Could be on customer's cluster]
 ```
  python db_json_exim.py --export-to config-db-dump.json
 ```
