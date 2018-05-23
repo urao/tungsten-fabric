@@ -1,5 +1,5 @@
 ## Steps to restore Config DB 
-#### Tested on Contrail All-in-one R3.2.9 version
+#### Tested on Contrail All-in-one Centos 7.4 running R3.2.9 version
 
 1. Backup the config db, using the below command [Could be on customer's cluster]
 ```
