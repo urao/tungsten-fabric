@@ -15,6 +15,7 @@
         service supervisor-database stop
         service contrail-database stop
         service zookeeper stop
+        service kafka stop
         ```
     -   Backup the existing cassandra database
         ```
@@ -50,6 +51,7 @@
         service supervisor-config start
         service supervisor-database start
         service supervisor-vrouter start
+        service kafka start
         ```
     -   Verify all the contrail services
         ```
