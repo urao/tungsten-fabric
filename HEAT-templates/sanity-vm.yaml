@@ -1,0 +1,88 @@
+heat_template_version: 2014-10-16
+
+description: >
+   Sanity test, involves create Flavor, upload Image, create VN and create a VM
+
+
+parameters:
+  image:
+    type: string
+    description: Image to be used for compute instance
+    default: cirros
+
+  flavor:
+    type: string
+    description: Type of instance (flavor) to be used
+    default: m1.tiny
+
+  network_name:
+    type: string
+    description: Name of VirtualNetwork to be created
+    
+  network_subnet_prefix:
+    type: string
+    description: Prefix of the Virtual Network
+  
+  network_subnet_prefix_len:
+    type: string
+    description: Prefix length of the Virtual Network
+    
+  network_subnet_default_gw:
+    type: string
+    description: Default Gateway of the Virtual Network
+    
+  network_is_shared:
+    type: boolean
+    description: Is the Virtual Network shared or not
+      
+  route_target:
+    type: string
+    description: Route Target of the virtual Network
+
+resources:
+  template_NetworkIpam_1:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name: { get_param: network_name }
+
+  template_VirtualNetwork_1:
+    type: OS::ContrailV2::VirtualNetwork
+    depends_on: [ template_NetworkIpam_1 ]
+    properties:
+      name: { get_param: network_name }
+      network_ipam_refs: [{ get_resource: template_NetworkIpam_1 }]
+      network_ipam_refs_data:
+        [{
+          network_ipam_refs_data_ipam_subnets:
+            [{
+              network_ipam_refs_data_ipam_subnets_subnet:
+                {
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: network_subnet_prefix },
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: network_subnet_prefix_len },
+                },
+              network_ipam_refs_data_ipam_subnets_default_gateway: { get_param: network_subnet_default_gw },
+            }]
+         }]
+      route_target_list:
+        {
+          route_target_list_route_target: [{ get_param: route_target }],
+        }
+      is_shared: { get_param: network_is_shared }
+
+  my_instance:
+    type: OS::Nova::Server
+    depends_on: [ nova_flavor glance_image ]
+    properties:
+      name: { get_param: instance_name }
+      image: { get_param: image }
+      flavor: { get_param: flavor }
+      networks:
+        - network: { get_resource: template_VirtualNetwork_1 }
+
+outputs:
+  instance_name:
+    description: Name of the instance
+    value: { get_attr: [my_instance, name] }
+  instance_ip:
+    description: IP address of the instance
+    value: { get_attr: [my_instance, first_address] }

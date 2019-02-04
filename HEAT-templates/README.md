@@ -11,9 +11,8 @@ pip install python-heatclient
 2) clone this repository
 ```
 git clone this repo
-cd opencontrail/HEAT-templates/cinder
+cd tungsten-fabric/HEAT-templates
 ```
-
 
 3) Set the number of instances, instance name and network name in cluster.env
 
