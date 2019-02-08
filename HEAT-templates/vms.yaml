@@ -1,0 +1,48 @@
+heat_template_version: 2015-04-30
+
+description: Heat template to create a VMs at scale in a single virtual-network
+
+parameters:
+  vm_name:
+    type: string
+    description: VM name to be created 
+ 
+  num_vms:
+    type: number
+    description: Number of VMs to be created 
+ 
+  vm_image:
+    type: string
+    description: Name of the VM image
+    
+  vm_flavor:
+    type: string
+    description: Flavor of the VM image
+
+  vm_network:
+    type: string
+    description: VirtualNetwork in which the VM to be created
+
+resources:
+  instances:
+    type: OS::Heat::ResourceGroup
+    properties:
+      count: {get_param: num_vms }
+      resource_def:
+        type: OS::Nova::Server
+        properties:
+          name: 
+            list_join: ['-', [ {get_param: vm_name }, '%index%' ]]
+          image: { get_param:  vm_image }
+          flavor: { get_param: vm_flavor }
+          networks:
+            - network: { get_param: vm_network }
+
+
+outputs:
+  instance_name:
+    description: Name of the instance
+    value: { get_attr: [instances, name] }
+  instance_ip:
+    description: IP address of the instance
+    value: { get_attr: [instances, first_address] }
