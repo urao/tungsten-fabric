@@ -1,3 +1,4 @@
+#junos-config
 set version 15.1X49-D130.6
 set groups log-all security policies from-zone <*> to-zone <*> policy <*> then log session-init
 set groups log-all security policies from-zone <*> to-zone <*> policy <*> then log session-close
