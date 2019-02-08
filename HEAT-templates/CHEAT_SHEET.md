@@ -13,4 +13,6 @@ openstack stack list
 openstack stack create -t <template_file> -e <env_file> <stack_name> --dry-run
 openstack stack delete <stack_name> -y
 openstack stack event list <stack_name>
+openstack stack failures list --long <stack_name>
+openstack stack resource list <stack_name>
 ```

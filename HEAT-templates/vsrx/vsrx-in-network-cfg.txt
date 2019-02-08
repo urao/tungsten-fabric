@@ -1,0 +1,226 @@
+#junos-config
+## Last commit: 2019-02-06 16:23:09 PST by root
+version 15.1X49-D130.6;
+groups {
+    log-all {
+        security {
+            policies {
+                from-zone <*> to-zone <*> {
+                    policy <*> {
+                        then {
+                            log {
+                                session-init;
+                                session-close;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+apply-groups log-all;
+system {
+    host-name vSRX1;
+    time-zone America/Los_Angeles;
+    root-authentication {
+        encrypted-password "$5$4G886V.r$HU0XzXUHCebMqhGZZsci/Lb.V/3opz0ZYQ0RMjGXZI7"; ## SECRET-DATA
+    }
+    name-server {
+        8.8.8.8;
+    }
+    services {
+        ssh {
+            root-login allow;
+        }
+        web-management {
+            http {
+                interface fxp0.0;
+            }
+        }
+    }
+    syslog {
+        user * {
+            any emergency;
+        }
+        file messages {
+            any any;
+            authorization info;
+        }
+        file interactive-commands {     
+            interactive-commands any;
+        }
+    }
+    license {
+        autoupdate {
+            url https://ae1.juniper.net/junos/key_retrieval;
+        }
+    }
+}
+security {
+    log {
+        mode stream;
+        format sd-syslog;
+        report;
+    }
+    screen {
+        ids-option untrust-screen {
+            icmp {
+                ping-death;
+            }
+            ip {
+                source-route-option;
+                tear-drop;
+            }
+            tcp {
+                syn-flood {
+                    alarm-threshold 1024;
+                    attack-threshold 200;
+                    source-threshold 1024;
+                    destination-threshold 2048;
+                    queue-size 2000; ## Warning: 'queue-size' is deprecated
+                    timeout 20;
+                }
+                land;
+            }
+        }
+    }
+    policies {
+        from-zone trust to-zone trust {
+            policy default-permit {
+                match {
+                    source-address any;
+                    destination-address any;
+                    application any;
+                }
+                then {
+                    permit;
+                }                       
+            }
+        }
+        from-zone trust to-zone untrust {
+            policy default-permit {
+                match {
+                    source-address any;
+                    destination-address any;
+                    application any;
+                }
+                then {
+                    permit;
+                }
+            }
+        }
+        from-zone untrust to-zone trust {
+            policy u2t-block {
+                match {
+                    source-address any;
+                    destination-address any;
+                    application any;
+                }
+                then {
+                    deny;
+                }
+            }
+        }
+        global {
+            policy global-policy {
+                match {
+                    source-address any;
+                    destination-address any;
+                    application any;
+                }
+                then {
+                    deny;
+                }
+            }
+        }
+        default-policy {
+            deny-all;
+        }
+    }
+    zones {
+        security-zone trust {
+            tcp-rst;
+            interfaces {
+                ge-0/0/0.0 {
+                    host-inbound-traffic {
+                        system-services {
+                            ping;
+                            dhcp;
+                        }
+                    }
+                }
+            }
+        }
+        security-zone untrust {
+            screen untrust-screen;
+            interfaces {
+                ge-0/0/1.0 {
+                    host-inbound-traffic {
+                        system-services {
+                            ping;
+                            dhcp;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+interfaces {
+    ge-0/0/0 {
+        unit 0 {
+            family inet {
+                dhcp-client;
+                filter {
+                    input left-to-right;
+                }
+            }
+        }
+    }
+    ge-0/0/1 {
+        unit 0 {
+            family inet {
+                dhcp-client;
+                filter {
+                    input right-to-left;
+                }
+            }
+        }
+    }
+    fxp0 {
+        unit 0 {
+            family inet {
+                dhcp-client;            
+            }
+        }
+    }
+}
+firewall {
+    family inet {
+        filter left-to-right {
+            term left-to-right {
+                then {
+                    routing-instance right;
+                }
+            }
+        }
+        filter right-to-left {
+            term right-to-left {
+                then {
+                    routing-instance left;
+                }
+            }
+        }
+    }
+}
+routing-instances {
+    left {
+        instance-type virtual-router;
+        interface ge-0/0/0.0;
+    }
+    right {
+        instance-type virtual-router;
+        interface ge-0/0/1.0;
+    }
+}

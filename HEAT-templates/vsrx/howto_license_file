@@ -1,0 +1,3 @@
+      user_data_format: RAW
+      config_drive: true
+      personality: { "/config/junos-config/configuration.txt": { get_file: "basic_vsrx.conf" }, "/config/junos-license/vsrx.lic": { get_file: "vsrx.licence" } }

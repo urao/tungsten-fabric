@@ -1,0 +1,74 @@
+set version 15.1X49-D130.6
+set groups log-all security policies from-zone <*> to-zone <*> policy <*> then log session-init
+set groups log-all security policies from-zone <*> to-zone <*> policy <*> then log session-close
+set apply-groups log-all
+set system host-name vSRX1
+set system time-zone America/Los_Angeles
+set system root-authentication encrypted-password "$5$4G886V.r$HU0XzXUHCebMqhGZZsci/Lb.V/3opz0ZYQ0RMjGXZI7"
+set system name-server 8.8.8.8
+set system services ssh root-login allow
+set system services web-management http interface fxp0.0
+set system syslog user * any emergency
+set system syslog file messages any any
+set system syslog file messages authorization info
+set system syslog file interactive-commands interactive-commands any
+set system license autoupdate url https://ae1.juniper.net/junos/key_retrieval
+set security log mode stream
+set security log format sd-syslog
+set security log report
+set security screen ids-option untrust-screen icmp ping-death
+set security screen ids-option untrust-screen ip source-route-option
+set security screen ids-option untrust-screen ip tear-drop
+set security screen ids-option untrust-screen tcp syn-flood alarm-threshold 1024
+set security screen ids-option untrust-screen tcp syn-flood attack-threshold 200
+set security screen ids-option untrust-screen tcp syn-flood source-threshold 1024
+set security screen ids-option untrust-screen tcp syn-flood destination-threshold 2048
+set security screen ids-option untrust-screen tcp syn-flood queue-size 2000
+set security screen ids-option untrust-screen tcp syn-flood timeout 20
+set security screen ids-option untrust-screen tcp land
+set security policies from-zone trust to-zone trust policy default-permit match source-address any
+set security policies from-zone trust to-zone trust policy default-permit match destination-address any
+set security policies from-zone trust to-zone trust policy default-permit match application any
+set security policies from-zone trust to-zone trust policy default-permit then permit
+set security policies from-zone trust to-zone untrust policy default-permit match source-address any
+set security policies from-zone trust to-zone untrust policy default-permit match destination-address any
+set security policies from-zone trust to-zone untrust policy default-permit match application any
+set security policies from-zone trust to-zone untrust policy default-permit then permit
+set security policies from-zone untrust to-zone trust policy u2t-block match source-address any
+set security policies from-zone untrust to-zone trust policy u2t-block match destination-address any
+set security policies from-zone untrust to-zone trust policy u2t-block match application any
+set security policies from-zone untrust to-zone trust policy u2t-block then deny
+set security zones security-zone trust tcp-rst
+set security zones security-zone trust interfaces ge-0/0/0.0 host-inbound-traffic system-services ping
+set security zones security-zone trust interfaces ge-0/0/0.0 host-inbound-traffic system-services dhcp
+set security zones security-zone trust interfaces ge-0/0/0.0 host-inbound-traffic system-services all
+set security zones security-zone untrust screen untrust-screen
+set security zones security-zone untrust interfaces ge-0/0/1.0 host-inbound-traffic system-services ping
+set security zones security-zone untrust interfaces ge-0/0/1.0 host-inbound-traffic system-services dhcp
+set security zones security-zone untrust interfaces ge-0/0/1.0 host-inbound-traffic system-services all
+set interfaces ge-0/0/0 unit 0 family inet dhcp-client
+set interfaces ge-0/0/1 unit 0 family inet dhcp-client
+set interfaces fxp0 unit 0 family inet dhcp-client
+set interfaces lo0 unit 0 family inet address 100.100.100.1/32
+set interfaces lo0 unit 0 family inet6 address 2001::100/128
+set routing-options router-id 192.168.120.3
+set routing-options autonomous-system 300
+set protocols bgp traceoptions file bgp
+set protocols bgp traceoptions file size 10k
+set protocols bgp traceoptions file files 5
+set protocols bgp traceoptions flag all
+set protocols bgp group BGPass-Left-VN type external
+set protocols bgp group BGPass-Left-VN multihop
+set protocols bgp group BGPass-Left-VN local-address 192.168.120.3
+set protocols bgp group BGPass-Left-VN family inet unicast
+set protocols bgp group BGPass-Left-VN family inet6 unicast
+set protocols bgp group BGPass-Left-VN export export-routes
+set protocols bgp group BGPass-Left-VN peer-as 64512
+set protocols bgp group BGPass-Left-VN multipath
+set protocols bgp group BGPass-Left-VN neighbor 192.168.120.1
+set protocols bgp group BGPass-Left-VN neighbor 192.168.120.2
+set policy-options policy-statement export-routes term 1 from protocol direct
+set policy-options policy-statement export-routes term 1 from protocol local
+set policy-options policy-statement export-routes term 1 then next-hop 192.168.120.3
+set policy-options policy-statement export-routes term 1 then accept
+set policy-options policy-statement export-routes term 2 then reject

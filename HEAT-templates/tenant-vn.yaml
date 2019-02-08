@@ -1,0 +1,75 @@
+heat_template_version: 2015-04-30
+
+description: Heat template to create a VirtualNetwork
+
+parameters:
+  domain:
+    type: string
+    description: Domain for the VirtualNetwork
+    default: default-domain
+
+  tenant_name:
+    type: string
+    description: Tenant name for the cluster
+
+  ipam_name:
+    type: string
+    description: Name of IPAM to be created
+
+  network_name:
+    type: string
+    description: VirtualNetwork name for the project
+
+  network_subnet_prefix:
+    type: string
+    description: Prefix of the Virtual Network
+
+  network_subnet_prefix_len:
+    type: string
+    description: Prefix length of the Virtual Network
+
+  network_subnet_default_gw:
+    type: string
+    description: Default Gateway of the Virtual Network
+
+  network_is_shared:
+    type: boolean
+    description: Virtual Network is shared or not
+
+  route_target:
+    type: string
+    description: Route Target of the virtual Network
+
+resources:
+  template_NetworkIpam_1:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name: { get_param: ipam_name }
+      fq_name: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }, { get_param: ipam_name }]] }
+      project: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }]] }
+
+
+  template_VirtualNetwork_1:
+    type: OS::ContrailV2::VirtualNetwork
+    depends_on: [ template_NetworkIpam_1 ]
+    properties:
+      name: { get_param: network_name }
+      network_ipam_refs: [{ get_resource: template_NetworkIpam_1 }]
+      network_ipam_refs_data:
+        [{
+          network_ipam_refs_data_ipam_subnets:
+            [{
+              network_ipam_refs_data_ipam_subnets_subnet:
+                {
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: network_subnet_prefix },
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: network_subnet_prefix_len },
+                },
+              network_ipam_refs_data_ipam_subnets_default_gateway: { get_param: network_subnet_default_gw },
+            }]
+         }]
+      route_target_list:
+        {
+          route_target_list_route_target: [{ get_param: route_target }],
+        }
+      is_shared: { get_param: network_is_shared }
+      project: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }]] }
