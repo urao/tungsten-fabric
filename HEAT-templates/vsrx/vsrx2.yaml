@@ -438,7 +438,9 @@ resources:
                 network_policy_entries_policy_rule_action_list: {
                         network_policy_entries_policy_rule_action_list_simple_action: { get_param: simple_action },
                         network_policy_entries_policy_rule_action_list_apply_service: 
-                                                                        [{ get_param: service_instance_fq_name }]
+                                                                        [{ get_param: service_instance_fq_name }],
+                        network_policy_entries_policy_rule_action_list_log: true
+
                                                                  },
                                                                       }]
         }
@@ -488,3 +490,14 @@ resources:
       flavor: { get_param: vm_flavor }
       networks:
         - port: { get_resource: template_VirtualMachineInterface_5 }
+
+outputs:
+  vsrx_mgmt_ip:
+    description: vSRX management ip
+    value: { get_attr: [ template_InstanceIp_1, instance_ip_address]}
+  vsrx_left_vn_ip:
+    description: vSRX left-vn ip
+    value: { get_attr: [ template_InstanceIp_2, instance_ip_address]}
+  vsrx_right_vn_ip:
+    description: vSRX right-vn ip
+    value: { get_attr: [ template_InstanceIp_3, instance_ip_address]}
