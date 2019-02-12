@@ -1,0 +1,145 @@
+heat_template_version: 2015-04-30
+
+description: Heat template to create a VirtualNetwork and 2VM's in same VN
+
+parameters:
+  domain:
+    type: string
+    description: Domain for the VirtualNetwork
+    default: default-domain
+
+  tenant_name:
+    type: string
+    description: tenant/project for the VirtualNetwork
+
+  ipam_name:
+    type: string
+    description: Name of IPAM to be created
+
+  network_name:
+    type: string
+    description: Name of VirtualNetwork to be created
+
+  network_subnet_prefix:
+    type: string
+    description: Prefix of the Virtual Network
+
+  network_subnet_prefix_len:
+    type: string
+    description: Prefix length of the Virtual Network
+
+  network_subnet_default_gw:
+    type: string
+    description: Default Gateway of the Virtual Network
+
+  network_is_shared:
+    type: boolean
+    description: Is the Virtual Network shared or not
+ 
+  route_target:
+    type: string
+    description: Route Target of the virtual Network
+
+  vm1_name:
+    type: string
+    description: VM1 name to be created 
+
+  vm2_name:
+    type: string
+    description: VM2 name to be created 
+
+  vm_image:
+    type: string
+    description: Name of the VM image
+
+  vm_flavor:
+    type: string
+    description: Flavor of the VM image
+
+
+resources:
+  template_NetworkIpam_1:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name: { get_param: ipam_name }
+      fq_name: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }, { get_param: ipam_name }]] }
+      project: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }]] }
+
+  template_VirtualNetwork_1:
+    type: OS::ContrailV2::VirtualNetwork
+    depends_on: [ template_NetworkIpam_1 ]
+    properties:
+      name: { get_param: network_name }
+      network_ipam_refs: [{ get_resource: template_NetworkIpam_1 }]
+      network_ipam_refs_data:
+        [{
+          network_ipam_refs_data_ipam_subnets:
+            [{
+              network_ipam_refs_data_ipam_subnets_subnet:
+                {
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: network_subnet_prefix },
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: network_subnet_prefix_len },
+                },
+              network_ipam_refs_data_ipam_subnets_default_gateway: { get_param: network_subnet_default_gw },
+            }]
+         }]
+      route_target_list:
+        {
+          route_target_list_route_target: [{ get_param: route_target }],
+        }
+      is_shared: { get_param: network_is_shared }
+      project: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }]] }
+
+  template_VirtualMachineInterface_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name: { get_param: vm1_name }
+      virtual_network_refs: [{ list_join: [':', { get_attr: [ template_VirtualNetwork_1, fq_name ] } ] }]
+
+  template_InstanceIp_1:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ template_VirtualMachineInterface_1, template_VirtualNetwork_1 ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: template_VirtualMachineInterface_1 }]
+      virtual_network_refs: [{ list_join: [':', { get_attr: [ template_VirtualNetwork_1, fq_name ] } ] }]
+
+  vm1:
+    type: OS::Nova::Server
+    depends_on: [ template_InstanceIp_1 ]
+    properties:
+      name: {get_param: vm1_name }
+      image: { get_param:  vm_image }
+      flavor: { get_param: vm_flavor }
+      networks:
+        - port: { get_resource: template_VirtualMachineInterface_1 }
+
+  template_VirtualMachineInterface_2:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name: { get_param: vm2_name }
+      virtual_network_refs: [{ list_join: [':', { get_attr: [ template_VirtualNetwork_1, fq_name ] } ] }]
+
+  template_InstanceIp_2:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ template_VirtualMachineInterface_2, template_VirtualNetwork_1 ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: template_VirtualMachineInterface_2 }]
+      virtual_network_refs: [{ list_join: [':', { get_attr: [ template_VirtualNetwork_1, fq_name ] } ] }]
+
+  vm2:
+    type: OS::Nova::Server
+    depends_on: [ template_InstanceIp_2 ]
+    properties:
+      name: {get_param: vm2_name }
+      image: { get_param:  vm_image }
+      flavor: { get_param: vm_flavor }
+      networks:
+        - port: { get_resource: template_VirtualMachineInterface_2 }
+
+outputs:
+  vm1_ip:
+    description: VM1 IP
+    value: { get_attr: [ template_InstanceIp_1, instance_ip_address]}
+  vm2_ip:
+    description: VM2 IP
+    value: { get_attr: [ template_InstanceIp_2, instance_ip_address]}
