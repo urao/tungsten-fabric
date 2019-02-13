@@ -1,0 +1,282 @@
+heat_template_version: 2015-04-30
+
+description: Heat template to create two VirtualNetworks and 1VM in each of it
+
+parameters:
+  domain:
+    type: string
+    description: Domain for the VirtualNetwork
+    default: default-domain
+
+  tenant_name:
+    type: string
+    description: tenant/project for the VirtualNetwork
+
+  ipam1_name:
+    type: string
+    description: Name of IPAM1 to be created
+
+  ipam2_name:
+    type: string
+    description: Name of IPAM2 to be created
+
+  network1_name:
+    type: string
+    description: Name of VirtualNetwork1 to be created
+
+  network1_subnet_prefix:
+    type: string
+    description: Prefix of the VirtualNetwork1
+
+  network1_subnet_prefix_len:
+    type: number
+    description: Prefix length of the VirtualNetwork1
+
+  network1_subnet_default_gw:
+    type: string
+    description: Default Gateway of the VirtualNetwork1
+
+  network1_is_shared:
+    type: boolean
+    description: Is the VirtualNetwork1 shared or not
+ 
+  route_target1:
+    type: string
+    description: Route Target of the VirtualNetwork1
+
+  network2_name:
+    type: string
+    description: Name of VirtualNetwork2 to be created
+
+  network2_subnet_prefix:
+    type: string
+    description: Prefix of the VirtualNetwork2
+
+  network2_subnet_prefix_len:
+    type: number
+    description: Prefix length of the VirtualNetwork2
+
+  network2_subnet_default_gw:
+    type: string
+    description: Default Gateway of the VirtualNetwork2
+
+  network2_is_shared:
+    type: boolean
+    description: Is the VirtualNetwork2 shared or not
+ 
+  route_target2:
+    type: string
+    description: Route Target of the VirtualNetwork2
+
+  vm1_name:
+    type: string
+    description: VM1 name to be created 
+
+  vm2_name:
+    type: string
+    description: VM2 name to be created 
+
+  vm_image:
+    type: string
+    description: Name of the VM image
+
+  vm_flavor:
+    type: string
+    description: Flavor of the VM image
+
+  network_policy_name:
+    type: string
+    description: Name of the Network Policy
+
+  simple_action:
+    type: string
+    description: Pass or Deny
+
+  protocol:
+    type: string
+    description: Protocol
+
+  src_port_end:
+    type: number
+    description: End of the Source Port Range
+
+  src_port_start:
+    type: number
+    description: Start of the Source Port Range
+
+  direction:
+    type: string
+    description: Direction of the Policy
+
+  dst_port_end:
+    type: number
+    description: End of the Destination Port Range
+
+  dst_port_start:
+    type: number
+    description: Start of the Destination Port Range
+
+resources:
+  template_NetworkIpam_1:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name: { get_param: ipam1_name }
+      fq_name: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }, { get_param: ipam1_name }]] }
+      project: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }]] }
+
+  template_VirtualNetwork_1:
+    type: OS::ContrailV2::VirtualNetwork
+    depends_on: [ template_NetworkIpam_1, template_NetworkPolicy ]
+    properties:
+      name: { get_param: network1_name }
+      network_ipam_refs: [{ get_resource: template_NetworkIpam_1 }]
+      network_ipam_refs_data:
+        [{
+          network_ipam_refs_data_ipam_subnets:
+            [{
+              network_ipam_refs_data_ipam_subnets_subnet:
+                {
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: network1_subnet_prefix },
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: network1_subnet_prefix_len },
+                },
+              network_ipam_refs_data_ipam_subnets_default_gateway: { get_param: network1_subnet_default_gw },
+            }]
+         }]
+      route_target_list:
+        {
+          route_target_list_route_target: [{ get_param: route_target1 }],
+        }
+      network_policy_refs: [{ list_join: [':', [ { get_param: domain }, { get_param: tenant_name }, { get_param: network_policy_name }]] }]
+      is_shared: { get_param: network1_is_shared }
+      project: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }]] }
+      network_policy_refs_data:
+        [{
+          network_policy_refs_data_sequence:
+            {
+              network_policy_refs_data_sequence_major: 0,
+              network_policy_refs_data_sequence_minor: 0,
+            },
+        }]
+
+  template_VirtualMachineInterface_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name: { get_param: vm1_name }
+      virtual_network_refs: [{ list_join: [':', { get_attr: [ template_VirtualNetwork_1, fq_name ] } ] }]
+
+  template_InstanceIp_1:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ template_VirtualMachineInterface_1, template_VirtualNetwork_1 ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: template_VirtualMachineInterface_1 }]
+      virtual_network_refs: [{ list_join: [':', { get_attr: [ template_VirtualNetwork_1, fq_name ] } ] }]
+
+  vm1:
+    type: OS::Nova::Server
+    depends_on: [ template_InstanceIp_1 ]
+    properties:
+      name: {get_param: vm1_name }
+      image: { get_param:  vm_image }
+      flavor: { get_param: vm_flavor }
+      networks:
+        - port: { get_resource: template_VirtualMachineInterface_1 }
+
+  template_NetworkIpam_2:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name: { get_param: ipam2_name }
+      fq_name: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }, { get_param: ipam2_name }]] }
+      project: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }]] }
+
+  template_VirtualNetwork_2:
+    type: OS::ContrailV2::VirtualNetwork
+    depends_on: [ template_NetworkIpam_2, template_NetworkPolicy ]
+    properties:
+      name: { get_param: network2_name }
+      network_ipam_refs: [{ get_resource: template_NetworkIpam_2 }]
+      network_ipam_refs_data:
+        [{
+          network_ipam_refs_data_ipam_subnets:
+            [{
+              network_ipam_refs_data_ipam_subnets_subnet:
+                {
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: network2_subnet_prefix },
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: network2_subnet_prefix_len },
+                },
+              network_ipam_refs_data_ipam_subnets_default_gateway: { get_param: network2_subnet_default_gw },
+            }]
+         }]
+      route_target_list:
+        {
+          route_target_list_route_target: [{ get_param: route_target2 }],
+        }
+      network_policy_refs: [{ list_join: [':', [ { get_param: domain }, { get_param: tenant_name }, { get_param: network_policy_name }]] }]
+      is_shared: { get_param: network2_is_shared }
+      project: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }]] }
+      network_policy_refs_data:
+        [{
+          network_policy_refs_data_sequence:
+            {
+              network_policy_refs_data_sequence_major: 0,
+              network_policy_refs_data_sequence_minor: 0,
+            },
+        }]
+
+  template_VirtualMachineInterface_2:
+    type: OS::ContrailV2::VirtualMachineInterface
+    properties:
+      name: { get_param: vm2_name }
+      virtual_network_refs: [{ list_join: [':', { get_attr: [ template_VirtualNetwork_2, fq_name ] } ] }]
+
+  template_InstanceIp_2:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ template_VirtualMachineInterface_2, template_VirtualNetwork_2 ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: template_VirtualMachineInterface_2 }]
+      virtual_network_refs: [{ list_join: [':', { get_attr: [ template_VirtualNetwork_2, fq_name ] } ] }]
+
+  vm2:
+    type: OS::Nova::Server
+    depends_on: [ template_InstanceIp_2 ]
+    properties:
+      name: {get_param: vm2_name }
+      image: { get_param:  vm_image }
+      flavor: { get_param: vm_flavor }
+      networks:
+        - port: { get_resource: template_VirtualMachineInterface_2 }
+
+  template_NetworkPolicy:
+    type: OS::ContrailV2::NetworkPolicy
+    properties:
+      name: { get_param: network_policy_name }
+      network_policy_entries: { network_policy_entries_policy_rule: [{
+                network_policy_entries_policy_rule_direction: { get_param: direction },
+                network_policy_entries_policy_rule_protocol: { get_param: protocol },
+                network_policy_entries_policy_rule_src_ports: [{
+                        network_policy_entries_policy_rule_src_ports_start_port: { get_param: src_port_start },
+                        network_policy_entries_policy_rule_src_ports_end_port: { get_param: src_port_end }
+                                                               }],
+                network_policy_entries_policy_rule_dst_ports: [{
+                        network_policy_entries_policy_rule_dst_ports_start_port: { get_param: dst_port_start },
+                        network_policy_entries_policy_rule_dst_ports_end_port: { get_param: dst_port_end }
+                                                              }],
+                network_policy_entries_policy_rule_dst_addresses: [{
+                        network_policy_entries_policy_rule_dst_addresses_virtual_network: { list_join: [':', [ {get_param: domain}, {get_param: tenant_name}, {get_param: network2_name} ]] }
+                                                                  }],
+                network_policy_entries_policy_rule_src_addresses: [{
+                        network_policy_entries_policy_rule_src_addresses_virtual_network: { list_join: [':', [ {get_param: domain}, {get_param: tenant_name}, {get_param: network1_name} ]] }
+                                                                  }],
+                network_policy_entries_policy_rule_action_list: {
+                        network_policy_entries_policy_rule_action_list_simple_action: { get_param: simple_action },
+                        network_policy_entries_policy_rule_action_list_log: true
+                                                                 },
+                                                                      }]
+        }
+
+outputs:
+  vm1_ip:
+    description: VM1 IP
+    value: { get_attr: [ template_InstanceIp_1, instance_ip_address]}
+  vm2_ip:
+    description: VM2 IP
+    value: { get_attr: [ template_InstanceIp_2, instance_ip_address]}
