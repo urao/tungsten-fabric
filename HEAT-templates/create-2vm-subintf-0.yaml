@@ -1,0 +1,219 @@
+heat_template_version: 2015-04-30
+
+description: Heat template to create VM with sub-interface vlan tag in same VN
+
+parameters:
+  domain:
+    type: string
+    description: Domain for the VirtualNetwork
+    default: default-domain
+
+  tenant_name:
+    type: string
+    description: tenant/project for the VirtualNetwork
+
+  ipam1_name:
+    type: string
+    description: Name of IPAM1 to be created
+
+  ipam2_name:
+    type: string
+    description: Name of IPAM2 to be created
+
+  network1_name:
+    type: string
+    description: Name of VirtualNetwork1 to be created
+
+  network1_subnet_prefix:
+    type: string
+    description: Prefix of the VirtualNetwork1
+
+  network1_subnet_prefix_len:
+    type: number
+    description: Prefix length of the VirtualNetwork1
+
+  network1_subnet_default_gw:
+    type: string
+    description: Default Gateway of the VirtualNetwork1
+
+  network2_name:
+    type: string
+    description: Name of VirtualNetwork2 to be created
+
+  network2_subnet_prefix:
+    type: string
+    description: Prefix of the VirtualNetwork2
+
+  network2_subnet_prefix_len:
+    type: number
+    description: Prefix length of the VirtualNetwork2
+
+  network2_subnet_default_gw:
+    type: string
+    description: Default Gateway of the VirtualNetwork2
+
+  vm1_name:
+    type: string
+    description: VM1 name to be created 
+
+  vm2_name:
+    type: string
+    description: VM2 name to be created 
+
+  vm_image:
+    type: string
+    description: Name of the VM image
+
+  vm_flavor:
+    type: string
+    description: Flavor of the VM image
+
+  primary_interface:
+    type: string
+    description: Primary Interface of the VM 
+
+  sub_interface:
+    type: string
+    description: Sub Interface of the VM 
+
+  vlanid:
+    type: number
+    description: VLANID of sub interface of the VM 
+
+  sub_intf_name:
+    type: string
+    description: Sub Interface name
+
+resources:
+  template_NetworkIpam_1:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name: { get_param: ipam1_name }
+      fq_name: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }, { get_param: ipam1_name }]] }
+      project: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }]] }
+
+  template_VirtualNetwork_1:
+    type: OS::ContrailV2::VirtualNetwork
+    depends_on: [ template_NetworkIpam_1 ]
+    properties:
+      name: { get_param: network1_name }
+      network_ipam_refs: [{ get_resource: template_NetworkIpam_1 }]
+      network_ipam_refs_data:
+        [{
+          network_ipam_refs_data_ipam_subnets:
+            [{
+              network_ipam_refs_data_ipam_subnets_subnet:
+                {
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: network1_subnet_prefix },
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: network1_subnet_prefix_len },
+                },
+              network_ipam_refs_data_ipam_subnets_default_gateway: { get_param: network1_subnet_default_gw },
+            }]
+         }]
+      project: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }]] }
+
+
+  boot_config:
+    type: OS::Heat::CloudConfig
+    properties:
+      cloud_config:
+        chpasswd:
+          list: |
+            ubuntu:contrail123
+          expire: False
+
+  boot_script:
+    type: OS::Heat::SoftwareConfig
+    properties:
+      group: ungrouped
+      config:
+        str_replace:
+          params:
+            $primary_interface: { get_param: primary_interface }
+            $vlanid: { get_param: vlanid }
+            $sub_interface: { get_param: sub_interface }
+          template: |
+            #!/bin/bash
+            set -eux
+            echo "Running boot script"
+            sudo modprobe 8021q
+            sudo ip link add link $primary_interface name $primary_interface.$vlanid type vlan id $vlanid
+            sudo dhclient $sub_interface
+
+  server_init:
+    type: OS::Heat::MultipartMime
+    properties:
+      parts:
+      - config: {get_resource: boot_config}
+      - config: {get_resource: boot_script}
+
+  vm1:
+    type: OS::Nova::Server
+    properties:
+      name: {get_param: vm1_name }
+      image: { get_param:  vm_image }
+      flavor: { get_param: vm_flavor }
+      user_data_format: SOFTWARE_CONFIG
+      user_data: {get_resource: server_init}
+      networks:
+        - network: { get_resource: template_VirtualNetwork_1 }
+
+  template_NetworkIpam_2:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name: { get_param: ipam2_name }
+      fq_name: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }, { get_param: ipam2_name }]] }
+      project: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }]] }
+
+  template_VirtualNetwork_2:
+    type: OS::ContrailV2::VirtualNetwork
+    depends_on: [ template_NetworkIpam_2 ]
+    properties:
+      name: { get_param: network2_name }
+      network_ipam_refs: [{ get_resource: template_NetworkIpam_2 }]
+      network_ipam_refs_data:
+        [{
+          network_ipam_refs_data_ipam_subnets:
+            [{
+              network_ipam_refs_data_ipam_subnets_subnet:
+                {
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: network2_subnet_prefix },
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: network2_subnet_prefix_len },
+                },
+              network_ipam_refs_data_ipam_subnets_default_gateway: { get_param: network2_subnet_default_gw },
+            }]
+         }]
+      project: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }]] }
+
+
+  template_VirtualMachineSubInterface_1:
+    type: OS::ContrailV2::VirtualMachineInterface
+    depends_on: [ template_VirtualNetwork_2 ]
+    properties:
+      name: { get_param: sub_intf_name }
+      virtual_network_refs: [{ get_resource: template_VirtualNetwork_2 }]
+      virtual_machine_interface_properties:
+        {
+          virtual_machine_interface_properties_sub_interface_vlan_tag: { get_param: vlanid },
+        }
+      virtual_machine_interface_mac_addresses:
+        {
+          virtual_machine_interface_mac_addresses_mac_address: [{ get_attr: [vm1, addresses, get_param: network1_name, 0, "OS-EXT-IPS-MAC:mac_addr"] }],
+        }
+      virtual_machine_interface_refs: [{ get_attr: [vm1, addresses, get_param: network1_name, 0, "port"] }]
+      project: { list_join: [':', [ { get_param: domain }, { get_param: tenant_name }]] }
+
+  template_InstanceIp_1:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ template_VirtualMachineSubInterface_1, template_VirtualNetwork_2 ]
+    properties:
+      virtual_machine_interface_refs: [{ get_resource: template_VirtualMachineSubInterface_1 }]
+      virtual_network_refs: [{ list_join: [':', { get_attr: [ template_VirtualNetwork_2, fq_name ] } ] }]
+
+outputs:
+  vm1_ip:
+    description: VM1 IP
+    value: { get_attr: [ template_InstanceIp_1, instance_ip_address]}
+  vm1_mac:
+    description: VM1 Mac-Address
+    value: { get_attr: [vm1, addresses, get_param: network1_name, 0, "OS-EXT-IPS-MAC:mac_addr"] }
