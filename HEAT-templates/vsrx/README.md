@@ -26,7 +26,7 @@ git clone https://github.com/urao/tungsten-fabric.git
 cd HEAT-templates
 ```
 6) Modify heat template file, with location of the junos configuration file
-7)
+7) Run the stack create command
 ```
 openstack stack create -e vsrx.env -t vsrx1.yaml vsrx001
 ```
