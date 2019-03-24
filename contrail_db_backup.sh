@@ -2,8 +2,7 @@
 # Tested on all-in-one contrail cluster based on unbuntu 14.04 contrail image
 # Backup the database except ContrailAnalytics
 #!/usr/bin/env bash
-set -e
-#set -x
+set -exu
 
 service supervisor-config stop
 service supervisor-analytics stop
