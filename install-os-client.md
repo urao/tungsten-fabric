@@ -4,6 +4,9 @@
 
 ```
 yum install -y gcc python-devel wget
+pip install virtualenv
+virtualenv .op
+source .op/bin/activate
 pip install python-openstackclient
 pip install python-ironicclient
 pip install python-neutronclient
@@ -14,6 +17,9 @@ pip install python-heatclient
 
 ```
 apt-get install -y gcc  python-dev wget
+pip install virtualenv
+virtualenv .op
+source .op/bin/activate
 pip install python-openstackclient
 pip install python-ironicclient
 pip install python-neutronclient
@@ -21,9 +27,6 @@ pip install python-heatclient
 ```
 
 ```
-pip install virtualenv
-virtualenv .op
-source .op/bin/activate
 source <location_of_openstackrc.sh>
 ```
 ```
