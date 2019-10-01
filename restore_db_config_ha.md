@@ -60,7 +60,7 @@ Contrail Software running R3.2.9 version.
     -   Import DB
         ```
         cd /usr/lib/python2.7/site-packages/cfgm_common/
-        python db_json_exim.py --import-to <file_name_path>.json
+        python db_json_exim.py --import-from <file_name_path>.json
         ```
 3. On all 3 controllers
 
