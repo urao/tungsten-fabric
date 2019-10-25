@@ -41,9 +41,9 @@ Contrail Software running R3.2.9 version.
         ```
     -   On all 3 controllers, backup the existing Zookeeper database
         ```
-        mkdir -p /var/lib/zookeeper/version-2-orig
-        cp -R /var/lib/zookeeper/version-2/* /var/lib/zookeeper/version-2-orig
-        rm -rf /var/lib/zookeeper/version-2/*
+        mkdir -p /var/lib/zookeeper/data/version-2-orig
+        cp -R /var/lib/zookeeper/data/version-2/* /var/lib/zookeeper/data/version-2-orig
+        rm -rf /var/lib/zookeeper/data/version-2/*
         ```
     -   On all 3 controllers, start Cassandra and Zookeeper services
         ```
