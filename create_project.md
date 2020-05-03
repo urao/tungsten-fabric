@@ -17,8 +17,7 @@ cat > body.json << EOM
     }
 }
 EOM
-curl -i -s -X POST -H "Content-Type: application/json" -d @./body.json http://<IP_ADDRESS>:8082/projects 
+curl -i -s -X POST -H "Content-Type: application/json" \
+                   -d @./body.json http://<IP_ADDRESS>:8082/projects 
 curl -X GET http://<IP_ADDRESS>:8082/projects
 ```
-
-## Reference
