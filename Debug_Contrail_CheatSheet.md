@@ -4,6 +4,7 @@
 1. Controller
 ```
 http://<controller_ip>:8083/Snh_IFMapTableShowReq?x=access-control-list
+http://<controller_ip>:8083/Snh_IFMapTableShowReq?table_name=&search_string=<VN_NAME>
 ```
 
 2. Schema
@@ -13,6 +14,7 @@ http://<controller_ip>:8087/Snh_SandeshUVECacheReq?x=NodeStatus
 
 3. Config
 ```
+http://<config_ip>:8082
 ```
 
 4. Analytics
