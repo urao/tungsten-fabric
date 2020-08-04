@@ -25,7 +25,7 @@ curl http://<analytics_ip>:5995/Snh_SandeshUVETypesReq? |  xmllint --format -
 curl http://<analytics_ip>:8089/Snh_SandeshTraceRequest?x=UveTrace | xmllint --format -
 curl http://<analytics_ip>:5995/Snh_SandeshTraceRequest?x=UVEQTrace | xmllint --format - 
 curl http://<analytics_ip>:8081/analytics/uves/virtual-networks | python -mjson.tool
-curl http://<analytics_ip>:8081/analytics/uves/virtual-network/default-domain:default-domain:<vn-name>?flat | python -mjson.tool
+curl http://<analytics_ip>:8081/analytics/uves/virtual-network/default-domain:default-domain:<vn-name>?flat
 curl http://<analytics_ip>:8090/Snh_SandeshUVECacheReq?x=NodeStatus | xmllint --format -
 curl http://<analytics_ip>:5995/Snh_SandeshUVECacheReq?x=NodeStatus  | xmllint --format -
 
@@ -34,6 +34,7 @@ curl http://<analytics_ip>:5995/Snh_SandeshUVECacheReq?x=NodeStatus  | xmllint -
 4. Compute
 ```
 http://<compute_ip>:8085/Snh_FetchAllFlowRecords
+http://<compute_ip>:8085/Snh_VnListReq
 http://<compute_ip>:8085/Snh_VnListReq?name=&uuid=&vxlan_id=&ipam_name=
 http://<compute_ip>:8085/Snh_ItfReq
 http://<compute_ip>:8085/Snh_AgentStatsReq
