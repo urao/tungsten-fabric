@@ -1,5 +1,5 @@
 #
-# Tested on all-in-one contrail cluster based on centos 7.4 contrail image
+# Tested on all-in-one contrail cluster 3.x based on centos 7.4 contrail image
 # Collect all the required contrail logs to sent to dev or jtac
 #!/usr/bin/env bash
 set -e
