@@ -34,7 +34,7 @@ curl http://<analytics_ip>:8081/analytics/uves/virtual-networks | python -mjson.
 curl http://<analytics_ip>:8081/analytics/uves/virtual-network/default-domain:default-domain:<vn-name>?flat
 curl http://<analytics_ip>:8090/Snh_SandeshUVECacheReq?x=NodeStatus | xmllint --format -
 curl http://<analytics_ip>:5995/Snh_SandeshUVECacheReq?x=NodeStatus  | xmllint --format -
-
+curl http://<analytics_ip>:8081/analytics/uve-stream?cfilt=ContrailConfig
 ```
 
 4. Compute
