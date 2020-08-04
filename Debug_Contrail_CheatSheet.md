@@ -5,6 +5,8 @@
 ```
 http://<controller_ip>:8083/Snh_IFMapTableShowReq?x=access-control-list
 http://<controller_ip>:8083/Snh_IFMapTableShowReq?table_name=&search_string=<VN_NAME>
+http://<controller-ip>:8083/Snh_ShowBgpNeighborSummaryReq?search_string=
+http://<controller-ip>:8083/Snh_SandeshUVECacheReq?x=NodeStatus
 ```
 
 2. Schema
@@ -14,7 +16,11 @@ http://<controller_ip>:8087/Snh_SandeshUVECacheReq?x=NodeStatus
 
 3. Config
 ```
-http://<config_ip>:8082
+curl http://<config_ip>:8082
+curl -k -u admin:<password> https://localhost:8082/access-control-lists?detail=True \
+          | python -m json.tool | grep -c rule_uuid
+curl -k -u admin:<password> https://localhost:8082/network-policys?detail=True \
+          | python -m json.tool | grep -c rule_uuid
 ```
 
 4. Analytics
