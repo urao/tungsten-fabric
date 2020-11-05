@@ -21,6 +21,7 @@ curl -k -u admin:<password> https://localhost:8082/access-control-lists?detail=T
           | python -m json.tool | grep -c rule_uuid
 curl -k -u admin:<password> https://localhost:8082/network-policys?detail=True \
           | python -m json.tool | grep -c rule_uuid
+http://<config_ip>:8084   ==> To enable SYS_DEBUG mode
 ```
 
 4. Analytics
