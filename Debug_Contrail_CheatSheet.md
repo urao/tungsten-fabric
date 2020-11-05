@@ -12,6 +12,7 @@ http://<controller-ip>:8083/Snh_SandeshUVECacheReq?x=NodeStatus
 2. Schema
 ```
 http://<controller_ip>:8087/Snh_SandeshUVECacheReq?x=NodeStatus
+http://<controller_ip>:8087  <==== Enable SYS_DEBUG
 ```
 
 3. Config
