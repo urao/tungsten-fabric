@@ -37,6 +37,7 @@ curl http://<analytics_ip>:8081/analytics/uves/virtual-network/default-domain:de
 curl http://<analytics_ip>:8090/Snh_SandeshUVECacheReq?x=NodeStatus | xmllint --format -
 curl http://<analytics_ip>:5995/Snh_SandeshUVECacheReq?x=NodeStatus  | xmllint --format -
 curl http://<analytics_ip>:8081/analytics/uve-stream?cfilt=ContrailConfig
+curl http://<analytics_ip>:8081/analytics/uves/control-node/<node_name>?flat
 ```
 
 4. Compute
