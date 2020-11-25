@@ -3,7 +3,7 @@
 
 1. Controller
 ```
-http://<controller_ip>:8083/Snh_IFMapTableShowReq?x=access-control-list
+http://<controller_ip>:8083/Snh_IFMapTableShowReq?x=access-control-list. >> check if the rabbitmq notification is received 
 http://<controller_ip>:8083/Snh_IFMapTableShowReq?table_name=&search_string=<VN_NAME>
 http://<controller-ip>:8083/Snh_ShowBgpNeighborSummaryReq?search_string=
 http://<controller-ip>:8083/Snh_SandeshUVECacheReq?x=NodeStatus
@@ -23,6 +23,7 @@ curl -k -u admin:<password> https://localhost:8082/access-control-lists?detail=T
 curl -k -u admin:<password> https://localhost:8082/network-policys?detail=True \
           | python -m json.tool | grep -c rule_uuid
 http://<config_ip>:8084   ==> To enable SYS_DEBUG mode
+http://<config_ip>:8084/Snh_SandeshTraceRequest?x=MessageBusNotifyTraceBuf. > Check rabbitmq notification by config
 ```
 
 4. Analytics
