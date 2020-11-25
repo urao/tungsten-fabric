@@ -14,5 +14,5 @@ OBJ_FQNAME_TABLE.get('project', column_count=10000)
 ```
 nodetool status
 nodetool tpstats
-nodetool cfstats
+nodetool cfstats -H > cass_size.txt;cat cass_size.txt | egrep "Keyspace|Table:|GB"
 ```
