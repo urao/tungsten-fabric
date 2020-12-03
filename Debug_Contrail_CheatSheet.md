@@ -51,5 +51,6 @@ http://<compute_ip>:8085/Snh_AgentStatsReq
 http://<compute_ip>:8085/Snh_CpuLoadInfoReq
 http://<compute_ip>:8085/Snh_KDropStatsReq
 http://<compute_ip>:8085/Snh_ShowAllInfo
+http://<compute_ip>:8083/Snh_ShowRoutingInstanceReq?search_string=aresriot.aws-rclusterp 
 ```
 
