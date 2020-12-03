@@ -22,4 +22,6 @@ nodetool status
 nodetool tpstats
 nodetool cfstats -H > cass_size.txt;cat cass_size.txt | egrep "Keyspace|Table:|GB"
 nodetool -p 7201 info
+docker exec -it config_database_cassandra_1 nodetool repair -p 7201 -pr
+docker exec -it config_database_cassandra_1 nodetool repair -p 7201 -pr --full
 ```
